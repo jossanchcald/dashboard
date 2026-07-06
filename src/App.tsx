@@ -1,5 +1,6 @@
 import './App.css'
 import { Grid } from '@mui/material';
+import AlertUI from './components/AlertUI.tsx';
 
 function App() {
   return (
@@ -9,7 +10,9 @@ function App() {
       <Grid size={12}>Elemento: Encabezado</Grid>
 
       {/* Alertas */}
-      <Grid size={12}>Elemento: Alertas</Grid>
+      <Grid size={12} container sx={{ justifyContent: "right", alignItems: "center" }}>
+        <AlertUI description="No se preveen lluvias" />
+      </Grid>
 
       {/* Selector */}
       <Grid size={{ xs: 12, md: 3 }}>Elemento: Selector</Grid>
@@ -29,5 +32,4 @@ function App() {
     </Grid>
   );
 }
-
 export default App
