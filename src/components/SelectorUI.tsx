@@ -8,10 +8,7 @@ interface SelectorUIProps {
     onChange: (value: string) => void;
 }
 
-export default function SelectorUI({
-    value,
-    onChange
-}: SelectorUIProps) {
+export default function SelectorUI({value, onChange}: SelectorUIProps) {
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         onChange(event.target.value);
@@ -27,6 +24,7 @@ export default function SelectorUI({
                 value={value}
                 onChange={handleChange}
             >
+                <MenuItem disabled><em>Seleccione una ciudad</em></MenuItem>
                 <MenuItem value="guayaquil">Guayaquil</MenuItem>
                 <MenuItem value="quito">Quito</MenuItem>
                 <MenuItem value="manta">Manta</MenuItem>

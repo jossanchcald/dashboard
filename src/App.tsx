@@ -6,6 +6,8 @@ import SelectorUI from './components/SelectorUI';
 import IndicatorUI from './components/IndicatorUI';
 import useFetchData from './hooks/useFetchData';
 import { useState } from 'react';
+import TableUI from './components/TableUI';
+import ChartUI from './components/ChartUI';
 
 function App() {
 
@@ -41,7 +43,7 @@ function App() {
       <Grid container size={{ xs: 12, md: 9 }} >
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Temperatura (2m)' description={city ? `${city.current.temperature_2m} ${city.current_units.temperature_2m}` : undefined } />)}
+          {(<IndicatorUI title='Temperatura' description={city ? `${city.current.temperature_2m} ${city.current_units.temperature_2m}` : undefined } />)}
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
@@ -49,20 +51,24 @@ function App() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Velocidad del viento (10m)' description={city ? `${city.current.wind_speed_10m} ${city.current_units.wind_speed_10m}`: undefined} />)}
+          {(<IndicatorUI title='Velocidad del viento' description={city ? `${city.current.wind_speed_10m} ${city.current_units.wind_speed_10m}`: undefined} />)}
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Humedad Relativa (2m)' description={city ? `${city.current.relative_humidity_2m} ${city.current_units.relative_humidity_2m}`: undefined} />)}
+          {(<IndicatorUI title='Humedad Relativa' description={city ? `${city.current.relative_humidity_2m} ${city.current_units.relative_humidity_2m}`: undefined} />)}
         </Grid>
 
       </Grid>
 
       {/* Gráfico */}
-      <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>Elemento: Gráfico</Grid>
+      <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
+        <ChartUI chartTitle={'Temperatura y Humedad Relativa por Hora'} value1Name={city ? `Temperatura ${city.hourly_units.temperature_2m}` : undefined} value2Name={city ? `Humedad Relativa ${city.hourly_units.relative_humidity_2m}` : undefined} arrHourlyTimes={city?.hourly.time} arrHourlyTemp2m={city?.hourly.temperature_2m} arrHourlyRelativeHum={city?.hourly.relative_humidity_2m}/>
+      </Grid>
 
       {/* Tabla */}
-      <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>Elemento: Tabla</Grid>
+      <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
+        <TableUI value1Name={city ? `Temperatura (${city.hourly_units.temperature_2m})` : undefined} value2Name={city ? `Humedad (${city.hourly_units.relative_humidity_2m})` : undefined} arrHourlyTimes={city?.hourly.time} arrHourlyTemp2m={city?.hourly.temperature_2m} arrHourlyRelativeHum={city?.hourly.relative_humidity_2m} />
+      </Grid>
 
       {/* Información adicional */}
       <Grid size={12}>Elemento: Información adicional</Grid>
