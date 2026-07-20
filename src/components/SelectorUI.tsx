@@ -2,16 +2,19 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { useState } from 'react';
 
 interface SelectorUIProps {
-    value: string;
-    onChange: (value: string) => void;
+    onOptionSelect: (option: string) => void;
 }
 
-export default function SelectorUI({value, onChange}: SelectorUIProps) {
+export default function SelectorUI({onOptionSelect}: SelectorUIProps) {
+
+    const [cityInput, setCityInput] = useState('');
 
     const handleChange = (event: SelectChangeEvent<string>) => {
-        onChange(event.target.value);
+        setCityInput(event.target.value)
+        onOptionSelect(event.target.value);
     };
 
     return (
@@ -21,20 +24,20 @@ export default function SelectorUI({value, onChange}: SelectorUIProps) {
             <Select
                 labelId="city-select-label"
                 label="Ciudad"
-                value={value}
+                value={cityInput}
                 onChange={handleChange}
             >
                 <MenuItem disabled><em>Seleccione una ciudad</em></MenuItem>
-                <MenuItem value="guayaquil">Guayaquil</MenuItem>
-                <MenuItem value="quito">Quito</MenuItem>
-                <MenuItem value="manta">Manta</MenuItem>
-                <MenuItem value="cuenca">Cuenca</MenuItem>
+                <MenuItem value="Guayaquil">Guayaquil</MenuItem>
+                <MenuItem value="Quito">Quito</MenuItem>
+                <MenuItem value="Manta">Manta</MenuItem>
+                <MenuItem value="Cuenca">Cuenca</MenuItem>
             </Select>
 
             <p>
                 Información del clima en{" "}
                 <span style={{ textTransform: "capitalize", fontWeight: "bold" }}>
-                    {value}
+                    {cityInput}
                 </span>
             </p>
 

@@ -1,6 +1,4 @@
-export type OpenMeteoResponse = City[]
-
-export interface City {
+export interface OpenMeteoResponse {
   latitude: number
   longitude: number
   generationtime_ms: number
