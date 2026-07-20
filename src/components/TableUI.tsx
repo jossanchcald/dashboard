@@ -1,66 +1,90 @@
 import Box from '@mui/material/Box';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 
-function combineArrays(arrLabels: Array<string>, arrValues1: Array<number>, arrValues2: Array<number>) {
-    return arrLabels.map((label, index) => ({
-        id: index,
-        label: label,
-        value1: arrValues1[index],
-        value2: arrValues2[index]
-    }));
+interface TableUIProps {
+    value1Name?: string;
+    value2Name?: string;
+    arrHourlyTimes?: Array<string>;
+    arrHourlyTemp2m?: Array<number>;
+    arrHourlyRelativeHum?: Array<number>;
 }
 
-const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-        field: 'label',
-        headerName: 'Label',
-        width: 125,
-    },
-    {
-        field: 'value1',
-        headerName: 'Value 1',
-        width: 125,
-    },
-    {
-        field: 'value2',
-        headerName: 'Value 2',
-        width: 125,
-    },
-    {
-        field: 'resumen',
-        headerName: 'Resumen',
-        description: 'No es posible ordenar u ocultar esta columna.',
-        sortable: false,
-        hideable: false,
-        width: 100,
-        valueGetter: (_, row) => `${row.label || ''} ${row.value1 || ''} ${row.value2 || ''}`,
-    },
+function combineArrays(
+    arrLabels: string[],
+    arrValues1: number[],
+    arrValues2: number[]
+) {
+    return arrLabels.map((label, index) => {
+
+        const date = new Date(label);
+
+        return {
+            id: index,
+            label: date.toLocaleString("es-EC", {
+                day: "2-digit",
+                month: "short",
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+            value1: arrValues1[index],
+            value2: arrValues2[index]
+        };
+    });
+}
+
+const arrValues1 = [0, 0, 0, 0, 0, 0, 0];
+const arrValues2 = [0, 0, 0, 0, 0, 0, 0];
+const arrLabels = [
+    '2026-01-01T00:00',
+    '2026-01-01T01:00',
+    '2026-01-01T02:00',
+    '2026-01-01T03:00',
+    '2026-01-01T04:00',
+    '2026-01-01T05:00',
+    '2026-01-01T06:00',
 ];
 
-const arrValues1 = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
-const arrValues2 = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-const arrLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+export default function TableUI(props: TableUIProps) {
 
-export default function TableUI() {
+    const columns: GridColDef[] = [
+        {
+            field: "label",
+            headerName: "Fecha",
+            width: 150,
+        },
+        {
+            field: "value1",
+            headerName: props.value1Name ?? "--",
+            width: 130,
+        },
+        {
+            field: "value2",
+            headerName: props.value2Name ?? "--",
+            width: 130,
+        },
+    ];
 
-    const rows = combineArrays(arrLabels, arrValues1, arrValues2);
-
-    return (
-        <Box sx={{ height: 350, width: '100%' }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                initialState={{
-                    pagination: {
-                        paginationModel: {
-                            pageSize: 5,
-                        },
-                    },
-                }}
-                pageSizeOptions={[5]}
-                disableRowSelectionOnClick
-            />
-        </Box>
+    const rows = combineArrays(
+        props.arrHourlyTimes ?? arrLabels,
+        props.arrHourlyTemp2m ?? arrValues1,
+        props.arrHourlyRelativeHum ?? arrValues2
     );
+
+   return (
+      <Box sx={{ height: 350, width: '100%' }}>
+         <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+               pagination: {
+                  paginationModel: {
+                     pageSize: 5,
+                  },
+               },
+            }}
+            pageSizeOptions={[5]}
+            disableRowSelectionOnClick
+         />
+      </Box>
+   );
 }

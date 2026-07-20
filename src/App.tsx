@@ -5,12 +5,21 @@ import AlertUI from './components/AlertUI';
 import SelectorUI from './components/SelectorUI';
 import IndicatorUI from './components/IndicatorUI';
 import useFetchData from './hooks/useFetchData';
+import { useState } from 'react';
 import TableUI from './components/TableUI';
 import ChartUI from './components/ChartUI';
 
 function App() {
 
-  const dataFetcherOutput = useFetchData();
+  const cities = useFetchData();
+
+  // Guayaquil por defecto
+  const [selectedCity, setSelectedCity] = useState("");
+
+  const cityNames = ["guayaquil", "quito", "manta", "cuenca"];
+
+  const index = cityNames.indexOf(selectedCity);
+  const city = index !== -1 ? cities?.[index] : undefined;
 
   return (
     <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center" }}>
@@ -27,57 +36,38 @@ function App() {
 
       {/* Selector */}
       <Grid size={{ xs: 12, md: 3 }} container sx={{ justifyContent: "right", alignItems: "center" }}>
-        <SelectorUI />
+        <SelectorUI value={selectedCity} onChange={setSelectedCity}/>
       </Grid>
 
       {/* Indicadores */}
       <Grid container size={{ xs: 12, md: 9 }} >
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {dataFetcherOutput &&
-            (<IndicatorUI
-              title='Temperatura (2m)'
-              description={`${dataFetcherOutput.current.temperature_2m} ${dataFetcherOutput.current_units.temperature_2m}`} />)
-          }
+          {(<IndicatorUI title='Temperatura' description={city ? `${city.current.temperature_2m} ${city.current_units.temperature_2m}` : undefined } />)}
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {dataFetcherOutput && (
-            <IndicatorUI
-              title="Temperatura Aparente"
-              description={`${dataFetcherOutput.current.apparent_temperature} ${dataFetcherOutput.current_units.apparent_temperature}`}
-            />
-          )}
+          {(<IndicatorUI title='Temperatura Aparente' description={city ? `${city.current.apparent_temperature} ${city.current_units.apparent_temperature}`: undefined} />)}
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {dataFetcherOutput && (
-            <IndicatorUI
-              title="Velocidad del viento (10m)"
-              description={`${dataFetcherOutput.current.wind_speed_10m} ${dataFetcherOutput.current_units.wind_speed_10m}`}
-            />
-          )}
+          {(<IndicatorUI title='Velocidad del viento' description={city ? `${city.current.wind_speed_10m} ${city.current_units.wind_speed_10m}`: undefined} />)}
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
-          {dataFetcherOutput && (
-            <IndicatorUI
-              title="Humedad Relativa (2m)"
-              description={`${dataFetcherOutput.current.relative_humidity_2m} ${dataFetcherOutput.current_units.relative_humidity_2m}`}
-            />
-          )}
+          {(<IndicatorUI title='Humedad Relativa' description={city ? `${city.current.relative_humidity_2m} ${city.current_units.relative_humidity_2m}`: undefined} />)}
         </Grid>
 
       </Grid>
 
       {/* Gráfico */}
       <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
-        <ChartUI />
+        <ChartUI chartTitle={'Temperatura y Humedad Relativa por Hora'} value1Name={city ? `Temperatura ${city.hourly_units.temperature_2m}` : undefined} value2Name={city ? `Humedad Relativa ${city.hourly_units.relative_humidity_2m}` : undefined} arrHourlyTimes={city?.hourly.time} arrHourlyTemp2m={city?.hourly.temperature_2m} arrHourlyRelativeHum={city?.hourly.relative_humidity_2m}/>
       </Grid>
 
       {/* Tabla */}
       <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
-        <TableUI />
+        <TableUI value1Name={city ? `Temperatura (${city.hourly_units.temperature_2m})` : undefined} value2Name={city ? `Humedad (${city.hourly_units.relative_humidity_2m})` : undefined} arrHourlyTimes={city?.hourly.time} arrHourlyTemp2m={city?.hourly.temperature_2m} arrHourlyRelativeHum={city?.hourly.relative_humidity_2m} />
       </Grid>
 
       {/* Información adicional */}
