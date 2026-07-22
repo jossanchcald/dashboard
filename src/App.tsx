@@ -2,22 +2,23 @@ import './App.css'
 import { Grid } from '@mui/material';
 import HeaderUI from './components/HeaderUI';
 import AlertUI from './components/AlertUI';
-import SelectorUI from './components/SelectorUI';
+import SelectorUI from './components/SelectorUINew';
 import IndicatorUI from './components/IndicatorUI';
-import useFetchData from './hooks/useFetchData';
+import useFetchData from './hooks/useFetchDataNew';
 import { useState } from 'react';
 import TableUI from './components/TableUI';
 import ChartUI from './components/ChartUI';
+import { type GeocodingResult } from './types/GeocodingTypes';
 
 function App() {
 
   // Utilice una variable de estado para almacenar la opción seleccionada por el usuario
   // Guayaquil por defecto
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<GeocodingResult | null>(null);
 
 
   // Comunique la opción seleccionada al hook useFetchData
-  const dataFetcherOutput = useFetchData(selectedCity);
+  const dataFetcherOutput = useFetchData(selectedCity ? { latitude: selectedCity.latitude, longitude: selectedCity.longitude } : null);
 
   return (
     <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center" }}>
