@@ -5,8 +5,8 @@ interface TableUIProps {
     value1Name?: string;
     value2Name?: string;
     arrHourlyTimes?: Array<string>;
-    arrHourlyTemp2m?: Array<number>;
-    arrHourlyRelativeHum?: Array<number>;
+    arrValues1?: Array<number>;
+    arrValues2?: Array<number>;
 }
 
 function combineArrays(
@@ -66,8 +66,8 @@ export default function TableUI(props: TableUIProps) {
 
     const rows = combineArrays(
         props.arrHourlyTimes ?? arrLabels,
-        props.arrHourlyTemp2m ?? arrValues1,
-        props.arrHourlyRelativeHum ?? arrValues2
+        props.arrValues1 ?? arrValues1,
+        props.arrValues2 ?? arrValues2
     );
 
    return (

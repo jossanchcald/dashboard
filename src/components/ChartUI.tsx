@@ -6,8 +6,8 @@ interface ChartUIProps {
   value1Name?: string;
   value2Name?: string;
   arrHourlyTimes?: Array<string>;
-  arrHourlyTemp2m?: Array<number>;
-  arrHourlyRelativeHum?: Array<number>;
+  arrValues1?: Array<number>;
+  arrValues2?: Array<number>;
 }
 
 const arrValues1 = [0, 0, 0, 0, 0, 0, 0];
@@ -24,11 +24,11 @@ export default function ChartUI(props: ChartUIProps) {
         height={300}
         series={[
           {
-            data: props.arrHourlyTemp2m ?? arrValues1,
+            data: props.arrValues1 ?? arrValues1,
             label: props.value1Name ?? "--",
           },
           {
-            data: props.arrHourlyRelativeHum ?? arrValues2,
+            data: props.arrValues2 ?? arrValues2,
             label: props.value2Name ?? "--",
           },
         ]}
