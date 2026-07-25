@@ -70,5 +70,24 @@ export const VARIABLE_OPTIONS: VariableOption[] = [
 
 // A lo mejor se podria cambiar a VARIABLE_OPTIONS.find((option) => option.key === key)?.label ?? "La clave no existe"
 export function getVariableLabel(key: VariableKey): string {
-  return VARIABLE_OPTIONS.find((option) => option.key === key)?.label ?? key
+  return VARIABLE_OPTIONS.find((option) => option.key === key)?.label ?? "No Encontrada"
+}
+
+export type RangeFilter = '24h' | '48h' | 'todo'
+
+export interface RangeFilterOption {
+  key: RangeFilter
+  label: string
+  hours?: number // undefined = mostrar todo
+}
+
+export const RANGE_FILTER_OPTIONS: RangeFilterOption[] = [
+  { key: '24h', label: '24 horas', hours: 24 },
+  { key: '48h', label: '48 horas', hours: 48 },
+  { key: 'todo', label: 'Mostrar todo' },
+]
+
+export function sliceByRange<T>(arr: T[], filter: RangeFilter): T[] {
+  const limit = RANGE_FILTER_OPTIONS.find((option) => option.key === filter)?.hours ?? arr.length
+  return arr.slice(0, limit)
 }

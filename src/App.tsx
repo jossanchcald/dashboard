@@ -9,8 +9,9 @@ import { useState } from 'react';
 import TableUI from './components/TableUI';
 import ChartUI from './components/ChartUI';
 import VariableSelectUI from './components/VariableSelectUI';
+import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
-import { type VariableKey, getVariableLabel } from './types/DashboardTypes';
+import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel } from './types/DashboardTypes';
 
 function App() {
 
@@ -22,12 +23,17 @@ function App() {
   const [variable1, setVariable1] = useState<VariableKey>('temperature_2m');
   const [variable2, setVariable2] = useState<VariableKey>('relative_humidity_2m');
 
+  // Rango horario a mostrar en el gráfico y la tabla (comparten el mismo filtro)
+  const [rangeFilter, setRangeFilter] = useState<RangeFilter>('24h');
+
   // Comunique la opción seleccionada al hook useFetchData
   const dataFetcherOutput = useFetchData(selectedCity ? { latitude: selectedCity.latitude, longitude: selectedCity.longitude } : null);
 
-  // Arreglos de datos horarios según la variable elegida por el usuario
-  const arrValues1 = dataFetcherOutput?.hourly[variable1];
-  const arrValues2 = dataFetcherOutput?.hourly[variable2];
+  // Rango horario a mostrar en el gráfico y la tabla (comparten el mismo filtro),
+  // ya recortado con el helper sliceByRange
+  const arrHourlyTimes = dataFetcherOutput ? sliceByRange(dataFetcherOutput.hourly.time, rangeFilter) : undefined;
+  const arrValues1 = dataFetcherOutput ? sliceByRange(dataFetcherOutput.hourly[variable1], rangeFilter) : undefined;
+  const arrValues2 = dataFetcherOutput ? sliceByRange(dataFetcherOutput.hourly[variable2], rangeFilter) : undefined;
 
   const value1Name = dataFetcherOutput
     ? `${getVariableLabel(variable1)} (${dataFetcherOutput.hourly_units[variable1]})`
@@ -85,13 +91,16 @@ function App() {
       {/* Resumen del Dia */}
       <Grid size={12}>Elemento: Resumen del Dia</Grid>
 
-      {/* Selectores de variables a comparar */}
-      <Grid size={12} container spacing={2} sx={ {  display: { xs: "none", md: "flex" }, justifyContent: "center", alignItems: "center" }   }>
+      {/* Selectores de variables a comparar y filtro de rango horario */}
+      <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
         <Grid size={{ xs: 12, md: 3 }}>
-          <VariableSelectUI label="Variable 1" value={variable1} excludeValue={variable2} onChange={setVariable1} />
+          <VariableSelectUI label="Variable 1" value={variable1} onChange={setVariable1} excludeValue={variable2} />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
-          <VariableSelectUI label="Variable 2" value={variable2} excludeValue={variable1} onChange={setVariable2} />
+          <VariableSelectUI label="Variable 2" value={variable2} onChange={setVariable2} excludeValue={variable1} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <RangeFilterUI value={rangeFilter} onChange={setRangeFilter} />
         </Grid>
       </Grid>
 
@@ -101,7 +110,7 @@ function App() {
           chartTitle={`${getVariableLabel(variable1)} y ${getVariableLabel(variable2)} por Hora`}
           value1Name={value1Name}
           value2Name={value2Name}
-          arrHourlyTimes={dataFetcherOutput?.hourly.time}
+          arrHourlyTimes={arrHourlyTimes}
           arrValues1={arrValues1}
           arrValues2={arrValues2}
         />
@@ -112,7 +121,7 @@ function App() {
         <TableUI
           value1Name={value1Name}
           value2Name={value2Name}
-          arrHourlyTimes={dataFetcherOutput?.hourly.time}
+          arrHourlyTimes={arrHourlyTimes}
           arrValues1={arrValues1}
           arrValues2={arrValues2}
         />
