@@ -11,7 +11,7 @@ import ChartUI from './components/ChartUI';
 import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
-import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel } from './types/DashboardTypes';
+import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel, getWeatherAlert } from './types/DashboardTypes';
 
 function App() {
 
@@ -42,6 +42,10 @@ function App() {
     ? `${getVariableLabel(variable2)} (${dataFetcherOutput.hourly_units[variable2]})`
     : undefined;
 
+  const weatherAlert = dataFetcherOutput
+    ? getWeatherAlert(dataFetcherOutput.current.weather_code)
+    : undefined;
+
   return (
     <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center" }}>
 
@@ -52,7 +56,10 @@ function App() {
 
       {/* Alertas */}
       <Grid size={12} container sx={{ justifyContent: "right", alignItems: "center" }}>
-        <AlertUI description="No se preveen lluvias" />
+        <AlertUI
+          description={weatherAlert ? `${weatherAlert.emoji} ${weatherAlert.message}` : 'Cargando estado del clima...'}
+          severity={weatherAlert?.severity}
+        />
       </Grid>
 
       {/* Selector Parte Superior
