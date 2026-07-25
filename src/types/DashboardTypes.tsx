@@ -10,6 +10,8 @@ export interface OpenMeteoResponse {
   current: Current
   hourly_units: HourlyUnits
   hourly: Hourly
+  daily_units: DailyUnits
+  daily: Daily
   location_id?: number
 }
 
@@ -29,6 +31,8 @@ export interface Current {
   relative_humidity_2m: number
   apparent_temperature: number
   wind_speed_10m: number
+  weather_code: number
+  is_day: 0 | 1
 }
 
 export interface HourlyUnits {
@@ -45,10 +49,27 @@ export interface Hourly {
   relative_humidity_2m: number[]
   wind_speed_10m: number[]
   apparent_temperature: number[]
+  weather_code: number[]
+  precipitation_probability: number[]
 }
 
-// Variables disponibles para comparar en el gráfico y la tabla.
-// Cada key coincide con el nombre del campo devuelto por OpenMeteo en "hourly".
+export interface DailyUnits {
+  temperature_2m_max: string
+  temperature_2m_min: string
+  sunrise: string
+  sunset: string
+}
+
+export interface Daily {
+  time: string[]
+  temperature_2m_max: number[]
+  temperature_2m_min: number[]
+  sunrise: string[]
+  sunset: string[]
+  weather_code: number[]
+  precipitation_probability_max: number[]
+}
+
 export type VariableKey =
   | 'temperature_2m'
   | 'relative_humidity_2m'
@@ -67,10 +88,8 @@ export const VARIABLE_OPTIONS: VariableOption[] = [
   { key: 'apparent_temperature', label: 'Temperatura aparente' },
 ]
 
-
-// A lo mejor se podria cambiar a VARIABLE_OPTIONS.find((option) => option.key === key)?.label ?? "La clave no existe"
 export function getVariableLabel(key: VariableKey): string {
-  return VARIABLE_OPTIONS.find((option) => option.key === key)?.label ?? "No Encontrada"
+  return VARIABLE_OPTIONS.find((option) => option.key === key)?.label ?? key
 }
 
 export type RangeFilter = '24h' | '48h' | 'todo'
@@ -78,16 +97,18 @@ export type RangeFilter = '24h' | '48h' | 'todo'
 export interface RangeFilterOption {
   key: RangeFilter
   label: string
-  hours?: number // undefined = mostrar todo
+  hours?: number
 }
 
 export const RANGE_FILTER_OPTIONS: RangeFilterOption[] = [
   { key: '24h', label: '24 horas', hours: 24 },
-  { key: '48h', label: '48 horas', hours: 48 },
-  { key: 'todo', label: 'Mostrar todo' },
+  { key: '48h', label: '2 dias', hours: 48 },
+  { key: 'todo', label: '7 dias' },
 ]
 
 export function sliceByRange<T>(arr: T[], filter: RangeFilter): T[] {
-  const limit = RANGE_FILTER_OPTIONS.find((option) => option.key === filter)?.hours ?? arr.length
+  const limit =
+    RANGE_FILTER_OPTIONS.find((option) => option.key === filter)?.hours ?? arr.length
+
   return arr.slice(0, limit)
 }

@@ -12,6 +12,7 @@ import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
 import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel } from './types/DashboardTypes';
+import { DailySummaryUI } from './components/DailySummaryUI';
 
 function App() {
 
@@ -89,7 +90,7 @@ function App() {
       </Grid>
 
       {/* Resumen del Dia */}
-      <Grid size={12}>Elemento: Resumen del Dia</Grid>
+      <Grid size={12}><Grid size={12}><DailySummaryUI daily={dataFetcherOutput?.daily} /></Grid></Grid>
 
       {/* Selectores de variables a comparar y filtro de rango horario */}
       <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
@@ -113,6 +114,7 @@ function App() {
           arrHourlyTimes={arrHourlyTimes}
           arrValues1={arrValues1}
           arrValues2={arrValues2}
+          rangeFilter={rangeFilter}
         />
       </Grid>
 
