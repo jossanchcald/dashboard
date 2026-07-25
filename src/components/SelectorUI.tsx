@@ -1,46 +1,44 @@
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { type SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+// components/SelectorUI.tsx
 import { useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import useCitySearch from '../hooks/useCitySearch';
+import { type GeocodingResult } from '../types/GeocodingTypes';
 
 interface SelectorUIProps {
-    onOptionSelect: (option: string) => void;
+    onOptionSelect: (city: GeocodingResult) => void;
 }
 
-export default function SelectorUI({onOptionSelect}: SelectorUIProps) {
-
-    const [cityInput, setCityInput] = useState('');
-
-    const handleChange = (event: SelectChangeEvent<string>) => {
-        setCityInput(event.target.value)
-        onOptionSelect(event.target.value);
-    };
+export default function SelectorUI({ onOptionSelect }: SelectorUIProps) {
+    const [inputValue, setInputValue] = useState('');
+    const { results, loading } = useCitySearch(inputValue);
 
     return (
         <FormControl fullWidth>
-            <InputLabel id="city-select-label">Ciudad</InputLabel>
-
-            <Select
-                labelId="city-select-label"
-                label="Ciudad"
-                value={cityInput}
-                onChange={handleChange}
-            >
-                <MenuItem disabled><em>Seleccione una ciudad</em></MenuItem>
-                <MenuItem value="Guayaquil">Guayaquil</MenuItem>
-                <MenuItem value="Quito">Quito</MenuItem>
-                <MenuItem value="Manta">Manta</MenuItem>
-                <MenuItem value="Cuenca">Cuenca</MenuItem>
-            </Select>
+            <Autocomplete
+                options={results}
+                loading={loading}
+                getOptionLabel={(option) =>
+                    `${option.name}${option.admin1 ? `, ${option.admin1}` : ''}, ${option.country}`
+                }
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onInputChange={(_, newValue) => setInputValue(newValue)}
+                onChange={(_, selectedCity) => {
+                    if (selectedCity) onOptionSelect(selectedCity);
+                }}
+                renderInput={(params) => (
+                    <TextField {...params} label="Ubicacion" placeholder="Escribe una ubicacion..." />
+                )}
+                noOptionsText={inputValue.length < 2 ? "Escribe al menos 2 letras" : "Sin resultados"}
+            />
 
             <p>
-                Información del clima en{" "}
+                Información del clima en{" "} <br></br>
                 <span style={{ textTransform: "capitalize", fontWeight: "bold" }}>
-                    {cityInput}
+                    {inputValue}
                 </span>
             </p>
-
         </FormControl>
     );
 }
