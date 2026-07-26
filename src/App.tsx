@@ -43,6 +43,10 @@ function App() {
     ? `${getVariableLabel(variable2)} (${dataFetcherOutput.hourly_units[variable2]})`
     : undefined;
 
+  const weatherAlert = dataFetcherOutput
+    ? getWeatherAlert(dataFetcherOutput.current.weather_code)
+    : undefined;
+
   return (
     <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center" }}>
 
@@ -53,7 +57,10 @@ function App() {
 
       {/* Alertas */}
       <Grid size={12} container sx={{ justifyContent: "right", alignItems: "center" }}>
-        <AlertUI description="No se preveen lluvias" />
+        <AlertUI
+          description={weatherAlert ? `${weatherAlert.emoji} ${weatherAlert.message}` : 'Cargando estado del clima...'}
+          severity={weatherAlert?.severity}
+        />
       </Grid>
 
       {/* Selector Parte Superior
