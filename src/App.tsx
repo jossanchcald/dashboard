@@ -1,6 +1,5 @@
 import './App.css'
 import { Grid } from '@mui/material';
-import HeaderUI from './components/HeaderUI';
 import AlertUI from './components/AlertUI';
 import SelectorUI from './components/SelectorUI';
 import IndicatorUI from './components/IndicatorUI';
@@ -11,8 +10,9 @@ import ChartUI from './components/ChartUI';
 import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
-import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel } from './types/DashboardTypes';
+import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel, getWeatherAlert } from './types/DashboardTypes';
 import { DailySummaryUI } from './components/DailySummaryUI';
+import WeatherHeaderUI from './components/WeatherHeaderUI';
 
 function App() {
 
@@ -52,7 +52,12 @@ function App() {
 
       {/* Encabezado */}
       <Grid size={12}>
-        <HeaderUI />
+        <WeatherHeaderUI
+          current={dataFetcherOutput?.current}
+          daily={dataFetcherOutput?.daily}
+          utcOffsetSeconds={dataFetcherOutput?.utc_offset_seconds}
+          locationName={selectedCity?.name}
+        />
       </Grid>
 
       {/* Alertas */}
