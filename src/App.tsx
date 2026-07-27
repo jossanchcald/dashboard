@@ -28,7 +28,8 @@ function App() {
   const [rangeFilter, setRangeFilter] = useState<RangeFilter>('24h');
 
   // Comunique la opción seleccionada al hook useFetchData
-  const dataFetcherOutput = useFetchData(selectedCity ? { latitude: selectedCity.latitude, longitude: selectedCity.longitude } : null);
+  const dataState = useFetchData(selectedCity ? { latitude: selectedCity.latitude, longitude: selectedCity.longitude } : null);
+  const dataFetcherOutput = dataState.data;
 
   // Rango horario a mostrar en el gráfico y la tabla (comparten el mismo filtro),
   // ya recortado con el helper sliceByRange
@@ -46,6 +47,14 @@ function App() {
   const weatherAlert = dataFetcherOutput
     ? getWeatherAlert(dataFetcherOutput.current.weather_code)
     : undefined;
+
+  while (dataState.loading) {
+    return <div>Bro cargando aguanta...</div>;
+  }
+
+  while (dataState.error) {
+    return <div>Bro hubo error ya valio...</div>;
+  }
 
   return (
     <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center" }}>

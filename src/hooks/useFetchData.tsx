@@ -7,8 +7,19 @@ interface Coords {
     longitude: number;
 }
 
-export default function useFetchData(coords: Coords | null): OpenMeteoResponse | undefined {
-    const [data, setData] = useState<OpenMeteoResponse>();
+interface DataState {
+    data: OpenMeteoResponse;
+    loading: boolean;
+    error: string | null;
+}
+
+export default function useFetchData(coords: Coords | null): DataState | undefined {
+
+    const [dataState, setDataState] = useState<DataState>({
+        data: null,
+        loading: true,
+        error: null
+    });
 
     useEffect(() => {
         // Guayaquil por defecto si aún no hay selección
@@ -20,14 +31,24 @@ export default function useFetchData(coords: Coords | null): OpenMeteoResponse |
                 const response = await fetch(URL);
                 if (!response.ok) throw new Error('Fetch error with OpenMeteo data');
                 const dataJSON: OpenMeteoResponse = await response.json();
-                setData(dataJSON);
+                setDataState(prev => ({
+                    data: dataJSON,
+                    loading: false,
+                    ...prev
+                }));
+
             } catch (error) {
                 console.log(error);
+                setDataState(prev => ({
+                    ...prev,
+                    loading: false,
+                    error: (error as Error).message
+                }));
             }
         };
 
         fetchData();
-    }, [coords?.latitude, coords?.longitude]);
+    }, [coords?.latitude, coords?.longitude]);   
 
-    return data;
+    return dataState;
 }
