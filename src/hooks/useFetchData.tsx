@@ -8,7 +8,7 @@ interface Coords {
 }
 
 interface DataState {
-    data: OpenMeteoResponse;
+    data: OpenMeteoResponse | null;
     loading: boolean;
     error: string | null;
 }
@@ -32,9 +32,9 @@ export default function useFetchData(coords: Coords | null): DataState | undefin
                 if (!response.ok) throw new Error('Fetch error with OpenMeteo data');
                 const dataJSON: OpenMeteoResponse = await response.json();
                 setDataState(prev => ({
+                    ...prev,
                     data: dataJSON,
                     loading: false,
-                    ...prev
                 }));
 
             } catch (error) {

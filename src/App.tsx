@@ -29,7 +29,7 @@ function App() {
 
   // Comunique la opción seleccionada al hook useFetchData
   const dataState = useFetchData(selectedCity ? { latitude: selectedCity.latitude, longitude: selectedCity.longitude } : null);
-  const dataFetcherOutput = dataState.data;
+  const dataFetcherOutput = dataState?.data;
 
   // Rango horario a mostrar en el gráfico y la tabla (comparten el mismo filtro),
   // ya recortado con el helper sliceByRange
@@ -48,12 +48,12 @@ function App() {
     ? getWeatherAlert(dataFetcherOutput.current.weather_code)
     : undefined;
 
-  while (dataState.loading) {
-    return <div>Bro cargando aguanta...</div>;
+  if (dataState?.loading) {
+    return <div>Cargando...</div>;
   }
 
-  while (dataState.error) {
-    return <div>Bro hubo error ya valio...</div>;
+  if (dataState?.error) {
+    return <div>Error: {dataState?.error}</div>;
   }
 
   return (
