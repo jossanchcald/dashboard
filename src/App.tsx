@@ -10,7 +10,7 @@ import ChartUI from './components/ChartUI';
 import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
-import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel, getWeatherAlert } from './types/DashboardTypes';
+import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel } from './types/DashboardTypes';
 import { WeeklySummaryUI } from './components/WeeklySummaryUI';
 import WeatherHeaderUI from './components/WeatherHeaderUI';
 
@@ -42,10 +42,6 @@ function App() {
     : undefined;
   const value2Name = dataFetcherOutput
     ? `${getVariableLabel(variable2)} (${dataFetcherOutput.hourly_units[variable2]})`
-    : undefined;
-
-  const weatherAlert = dataFetcherOutput
-    ? getWeatherAlert(dataFetcherOutput.current.weather_code)
     : undefined;
 
   if (dataState?.loading) {

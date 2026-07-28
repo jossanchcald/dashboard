@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import WeatherIconUI from './WeatherIconUI';
-import { getDayCondition } from '../utils/weatherCondition';
+import { getWeatherCondition } from '../utils/weatherCondition';
 import { type Daily } from '../types/DashboardTypes';
 
 interface WeeklySummaryUIProps {
@@ -43,8 +43,8 @@ export function WeeklySummaryUI(props: WeeklySummaryUIProps) {
           {days.map((isoDate, index) => {
             const max = props.daily!.temperature_2m_max[index];
             const min = props.daily!.temperature_2m_min[index];
-            const precipProbMax = props.daily!.precipitation_probability_max[index];
-            const condition = getDayCondition(precipProbMax);
+            const weatherCode = props.daily!.weather_code[index];
+            const condition = getWeatherCondition(weatherCode);
             const today = isToday(isoDate);
 
             return (
