@@ -28,3 +28,21 @@ export function getConditionLabel(condition: WeatherCondition): string {
   };
   return labels[condition];
 }
+
+// A partir de qué probabilidad de precipitación (%) se considera un día lluvioso
+const RAIN_PROBABILITY_THRESHOLD = 50;
+
+export type DayCondition = 'soleado' | 'lluvioso';
+
+// Calcula si un día es soleado o lluvioso en base a la probabilidad de precipitación máxima
+export function getDayCondition(precipitationProbabilityMax: number): DayCondition {
+  return precipitationProbabilityMax >= RAIN_PROBABILITY_THRESHOLD ? 'lluvioso' : 'soleado';
+}
+
+export function getDayConditionLabel(condition: DayCondition): string {
+  const labels: Record<DayCondition, string> = {
+    soleado: 'Soleado',
+    lluvioso: 'Lluvioso',
+  };
+  return labels[condition];
+}

@@ -1,6 +1,6 @@
 import './App.css'
 import { Grid } from '@mui/material';
-import AlertUI from './components/AlertUI';
+{/* import AlertUI from './components/AlertUI';*/}
 import SelectorUI from './components/SelectorUI';
 import IndicatorUI from './components/IndicatorUI';
 import useFetchData from './hooks/useFetchData';
@@ -11,7 +11,7 @@ import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
 import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel, getWeatherAlert } from './types/DashboardTypes';
-import { DailySummaryUI } from './components/DailySummaryUI';
+import { WeeklySummaryUI } from './components/WeeklySummaryUI';
 import WeatherHeaderUI from './components/WeatherHeaderUI';
 
 function App() {
@@ -69,13 +69,13 @@ function App() {
         />
       </Grid>
 
-      {/* Alertas */}
+      {/* Alertas 
       <Grid size={12} container sx={{ justifyContent: "right", alignItems: "center" }}>
         <AlertUI
           description={weatherAlert ? `${weatherAlert.emoji} ${weatherAlert.message}` : 'Cargando estado del clima...'}
           severity={weatherAlert?.severity}
         />
-      </Grid>
+      </Grid> */}
 
       {/* Selector Parte Superior
       <Grid size={12} container sx={{ justifyContent: "center", alignItems: "center" }}>
@@ -110,8 +110,17 @@ function App() {
 
       </Grid>
 
-      {/* Resumen del Dia */}
-      <Grid size={12}><Grid size={12}><DailySummaryUI daily={dataFetcherOutput?.daily} /></Grid></Grid>
+      <Grid container size={12}>
+        <Grid
+          size={12}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <WeeklySummaryUI daily={dataFetcherOutput?.daily} />
+        </Grid>
+      </Grid>
 
       {/* Selectores de variables a comparar y filtro de rango horario */}
       <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
