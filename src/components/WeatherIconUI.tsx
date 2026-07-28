@@ -66,15 +66,26 @@ export default function WeatherIconUI(props: WeatherIconUIProps) {
       )}
 
       {isCloudy ? (
-        <CloudQueueIcon
-          sx={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            fontSize: size * 0.75,
-            color: '#90A4AE',
-          }}
-        />
+        <>
+          <CloudQueueIcon
+            sx={{
+              position: 'absolute',
+              bottom: size * 0.12,
+              right: size * 0.18,
+              fontSize: size * 0.62,
+              color: '#D3D1C7', // nube trasera, más clara
+            }}
+          />
+          <CloudIcon
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              fontSize: size * 0.72,
+              color: '#888780', // nube delantera, más oscura
+            }}
+          />
+        </>
       ) : (
         <CloudIcon
           sx={{
