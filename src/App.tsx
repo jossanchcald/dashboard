@@ -15,7 +15,8 @@ import ChartUI from './components/ChartUI';
 import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
-import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel, getWeatherAlert } from './types/DashboardTypes';
+import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel } from './types/DashboardTypes';
+import { WeeklySummaryUI } from './components/WeeklySummaryUI';
 import WeatherHeaderUI from './components/WeatherHeaderUI';
 import { DEFAULT_CITY } from './constants/defaultCity';
 
@@ -132,17 +133,32 @@ function App() {
           </Grid>
         </Grid>
 
-        <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <VariableSelectUI label="Variable 1" value={variable1} onChange={setVariable1} excludeValue={variable2} />
-          </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <VariableSelectUI label="Variable 2" value={variable2} onChange={setVariable2} excludeValue={variable1} />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <RangeFilterUI value={rangeFilter} onChange={setRangeFilter} />
-          </Grid>
+      </Grid>
+
+      <Grid container size={12}>
+        <Grid
+          size={12}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <WeeklySummaryUI daily={dataFetcherOutput?.daily} />
         </Grid>
+      </Grid>
+
+      {/* Selectores de variables a comparar y filtro de rango horario */}
+      <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <VariableSelectUI label="Variable 1" value={variable1} onChange={setVariable1} excludeValue={variable2} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <VariableSelectUI label="Variable 2" value={variable2} onChange={setVariable2} excludeValue={variable1} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <RangeFilterUI value={rangeFilter} onChange={setRangeFilter} />
+        </Grid>
+      </Grid>
 
         <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
           <ChartUI

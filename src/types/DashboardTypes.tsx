@@ -113,37 +113,3 @@ export function sliceByRange<T>(arr: T[], filter: RangeFilter): T[] {
 
   return arr.slice(0, limit)
 }
-
-export type AlertSeverity = 'success' | 'info' | 'warning' | 'error'
-
-export interface WeatherAlert {
-  emoji: string
-  message: string
-  severity: AlertSeverity
-}
-
-interface WeatherCodeMapping {
-  codes: number[]
-  emoji: string
-  message: string
-  severity: AlertSeverity
-}
-
-const WEATHER_CODE_MAP: WeatherCodeMapping[] = [
-  { codes: [0, 1], emoji: '☀️', message: 'Cielo despejado', severity: 'success' },
-  { codes: [2, 3], emoji: '⛅', message: 'Nublado', severity: 'success' },
-  { codes: [45, 48], emoji: '🌫️', message: 'Hay niebla en este momento', severity: 'info' },
-  { codes: [51, 53, 55, 56, 57], emoji: '🌦️', message: 'Hay llovizna actualmente', severity: 'info' },
-  { codes: [61, 63, 65, 66, 67], emoji: '🌧️', message: 'Está lloviendo actualmente', severity: 'warning' },
-  { codes: [71, 73, 75, 77], emoji: '❄️', message: 'Está nevando actualmente', severity: 'warning' },
-  { codes: [80, 81, 82], emoji: '🌦️', message: 'Se presentan chubascos', severity: 'warning' },
-  { codes: [85, 86], emoji: '🌨️', message: 'Chubascos de nieve', severity: 'warning' },
-  { codes: [95, 96, 99], emoji: '⛈️', message: 'Tormenta eléctrica en curso', severity: 'error' },
-]
-
-const DEFAULT_ALERT: WeatherAlert = { emoji: '✅', message: 'Sin precipitaciones actualmente', severity: 'success' }
-
-export function getWeatherAlert(weatherCode: number): WeatherAlert {
-  const match = WEATHER_CODE_MAP.find((entry) => entry.codes.includes(weatherCode))
-  return match ?? DEFAULT_ALERT
-}
