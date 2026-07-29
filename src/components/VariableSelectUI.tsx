@@ -24,8 +24,9 @@ export default function VariableSelectUI({ label, value, excludeValue, onChange 
   return (
     <Box sx={{ minWidth: 160 }}>
       <FormControl fullWidth size="small">
-        <InputLabel id={labelId}>{label}</InputLabel>
-        <Select
+        <InputLabel variant='filled' id={labelId}>{label}</InputLabel>
+        <Select 
+          variant='filled'
           labelId={labelId}
           id={selectId}
           value={value}

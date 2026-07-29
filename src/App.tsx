@@ -1,38 +1,43 @@
 import './App.css'
 import { Grid } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
 import AlertUI from './components/AlertUI';
 import SelectorUI from './components/SelectorUI';
 import IndicatorUI from './components/IndicatorUI';
 import useFetchData from './hooks/useFetchData';
-import { useState } from 'react';
+import useWeatherTheme from './hooks/useWeatherTheme';
+import getAppTheme from './theme/getAppTheme';
+import { useState, useMemo } from 'react';
 import TableUI from './components/TableUI';
 import ChartUI from './components/ChartUI';
 import VariableSelectUI from './components/VariableSelectUI';
 import RangeFilterUI from './components/RangeFilterUI';
 import { type GeocodingResult } from './types/GeocodingTypes';
 import { type VariableKey, type RangeFilter, sliceByRange, getVariableLabel, getWeatherAlert } from './types/DashboardTypes';
-import { DailySummaryUI } from './components/DailySummaryUI';
 import WeatherHeaderUI from './components/WeatherHeaderUI';
+import { DEFAULT_CITY } from './constants/defaultCity';
 
 function App() {
-
-  // Utilice una variable de estado para almacenar la opción seleccionada por el usuario
-  // Guayaquil por defecto
-  const [selectedCity, setSelectedCity] = useState<GeocodingResult | null>(null);
-
-  // Variables que el usuario quiere comparar en el gráfico y la tabla
+  // Inicializamos con Guayaquil en vez de null, así el selector
+  // ya muestra el nombre correcto desde el primer render.
+  const [selectedCity, setSelectedCity] = useState<GeocodingResult>(DEFAULT_CITY);
   const [variable1, setVariable1] = useState<VariableKey>('temperature_2m');
   const [variable2, setVariable2] = useState<VariableKey>('relative_humidity_2m');
-
-  // Rango horario a mostrar en el gráfico y la tabla (comparten el mismo filtro)
   const [rangeFilter, setRangeFilter] = useState<RangeFilter>('24h');
 
-  // Comunique la opción seleccionada al hook useFetchData
-  const dataState = useFetchData(selectedCity ? { latitude: selectedCity.latitude, longitude: selectedCity.longitude } : null);
+  const dataState = useFetchData({ latitude: selectedCity.latitude, longitude: selectedCity.longitude });
   const dataFetcherOutput = dataState?.data;
 
-  // Rango horario a mostrar en el gráfico y la tabla (comparten el mismo filtro),
-  // ya recortado con el helper sliceByRange
+  // ---- Clima/hora centralizado, alimenta el fondo global y el tema de MUI ----
+  const weatherTheme = useWeatherTheme(
+    dataFetcherOutput?.current,
+    dataFetcherOutput?.daily,
+    dataFetcherOutput?.utc_offset_seconds
+  );
+  const theme = useMemo(() => getAppTheme(weatherTheme.isDay), [weatherTheme.isDay]);
+
   const arrHourlyTimes = dataFetcherOutput ? sliceByRange(dataFetcherOutput.hourly.time, rangeFilter) : undefined;
   const arrValues1 = dataFetcherOutput ? sliceByRange(dataFetcherOutput.hourly[variable1], rangeFilter) : undefined;
   const arrValues2 = dataFetcherOutput ? sliceByRange(dataFetcherOutput.hourly[variable2], rangeFilter) : undefined;
@@ -48,109 +53,121 @@ function App() {
     ? getWeatherAlert(dataFetcherOutput.current.weather_code)
     : undefined;
 
+  // ---- Fondo global: se pinta SIEMPRE, incluso durante loading/error,
+  // así la pantalla de carga no es un blanco/negro plano sin relación al tema ----
+  const globalBackground = (
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: -1,
+        background: weatherTheme.background,
+        transition: 'background 1s ease',
+      }}
+    >
+      <Box sx={{ position: 'absolute', inset: 0, background: weatherTheme.overlay, transition: 'background 1s ease' }} />
+    </Box>
+  );
+
   if (dataState?.loading) {
-    return <div>Cargando...</div>;
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {globalBackground}
+        <Box sx={{ p: 4 }}>Cargando...</Box>
+      </ThemeProvider>
+    );
   }
 
   if (dataState?.error) {
-    return <div>Error: {dataState?.error}</div>;
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {globalBackground}
+        <Box sx={{ p: 4 }}>Error: {dataState.error}</Box>
+      </ThemeProvider>
+    );
   }
 
   return (
-    <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center" }}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {globalBackground}
 
-      {/* Encabezado */}
-      <Grid size={12}>
-        <WeatherHeaderUI
-          current={dataFetcherOutput?.current}
-          daily={dataFetcherOutput?.daily}
-          utcOffsetSeconds={dataFetcherOutput?.utc_offset_seconds}
-          locationName={selectedCity?.name}
-        />
+      <Grid container spacing={5} sx={{ justifyContent: "left", alignItems: "center", p: 3 }}>
+
+        <Grid size={12}>
+          <WeatherHeaderUI
+            current={dataFetcherOutput?.current}
+            daily={dataFetcherOutput?.daily}
+            utcOffsetSeconds={dataFetcherOutput?.utc_offset_seconds}
+            locationName={selectedCity?.name}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }} container sx={{ justifyContent: "right", alignItems: "center" }}>
+          <SelectorUI value={selectedCity} onOptionSelect={setSelectedCity} />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }} container sx={{ justifyContent: "right", alignItems: "center" }}>
+          <AlertUI
+            description={weatherAlert ? `${weatherAlert.emoji} ${weatherAlert.message}` : 'Cargando estado del clima...'}
+            severity={weatherAlert?.severity}
+          />
+        </Grid>
+
+        <Grid container size={{ xs: 12, md: 12 }} sx={{ justifyContent: 'center', gap: 2 }}>
+          {/* <Grid size={{ xs: 12, md: 3 }}>
+            <IndicatorUI title='Temperatura' description={dataFetcherOutput ? `${dataFetcherOutput.current.temperature_2m} ${dataFetcherOutput.current_units.temperature_2m}` : undefined} />
+          </Grid> */}
+          <Grid sx={{ display: 'none' }} size={{ md: 3 }}></Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <IndicatorUI title='Temperatura Aparente' description={dataFetcherOutput ? `${dataFetcherOutput.current.apparent_temperature} ${dataFetcherOutput.current_units.apparent_temperature}` : undefined} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <IndicatorUI title='Velocidad del viento' description={dataFetcherOutput ? `${dataFetcherOutput.current.wind_speed_10m} ${dataFetcherOutput.current_units.wind_speed_10m}` : undefined} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <IndicatorUI title='Humedad Relativa' description={dataFetcherOutput ? `${dataFetcherOutput.current.relative_humidity_2m} ${dataFetcherOutput.current_units.relative_humidity_2m}` : undefined} />
+          </Grid>
+        </Grid>
+
+        <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <VariableSelectUI label="Variable 1" value={variable1} onChange={setVariable1} excludeValue={variable2} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <VariableSelectUI label="Variable 2" value={variable2} onChange={setVariable2} excludeValue={variable1} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <RangeFilterUI value={rangeFilter} onChange={setRangeFilter} />
+          </Grid>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
+          <ChartUI
+            chartTitle={`${getVariableLabel(variable1)} y ${getVariableLabel(variable2)}`}
+            value1Name={value1Name}
+            value2Name={value2Name}
+            arrHourlyTimes={arrHourlyTimes}
+            arrValues1={arrValues1}
+            arrValues2={arrValues2}
+            rangeFilter={rangeFilter}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
+          <TableUI
+            value1Name={value1Name}
+            value2Name={value2Name}
+            arrHourlyTimes={arrHourlyTimes}
+            arrValues1={arrValues1}
+            arrValues2={arrValues2}
+          />
+        </Grid>
+
       </Grid>
-
-      {/* Alertas */}
-      <Grid size={12} container sx={{ justifyContent: "right", alignItems: "center" }}>
-        <AlertUI
-          description={weatherAlert ? `${weatherAlert.emoji} ${weatherAlert.message}` : 'Cargando estado del clima...'}
-          severity={weatherAlert?.severity}
-        />
-      </Grid>
-
-      {/* Selector Parte Superior
-      <Grid size={12} container sx={{ justifyContent: "center", alignItems: "center" }}>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <SelectorUI onOptionSelect={setSelectedCity} />
-        </Grid>
-      </Grid> */}
-
-      {/* Selector */}
-      <Grid size={{ xs: 12, md: 3 }} container sx={{ justifyContent: "right", alignItems: "center" }}>
-        <SelectorUI onOptionSelect={setSelectedCity} />
-      </Grid>
-
-      {/* Indicadores */}
-      <Grid container size={{ xs: 12, md: 9 }} >
-
-        <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Temperatura' description={dataFetcherOutput ? `${dataFetcherOutput.current.temperature_2m} ${dataFetcherOutput.current_units.temperature_2m}` : undefined} />)}
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Temperatura Aparente' description={dataFetcherOutput ? `${dataFetcherOutput.current.apparent_temperature} ${dataFetcherOutput.current_units.apparent_temperature}` : undefined} />)}
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Velocidad del viento' description={dataFetcherOutput ? `${dataFetcherOutput.current.wind_speed_10m} ${dataFetcherOutput.current_units.wind_speed_10m}` : undefined} />)}
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 3 }}>
-          {(<IndicatorUI title='Humedad Relativa' description={dataFetcherOutput ? `${dataFetcherOutput.current.relative_humidity_2m} ${dataFetcherOutput.current_units.relative_humidity_2m}` : undefined} />)}
-        </Grid>
-
-      </Grid>
-
-      {/* Resumen del Dia */}
-      <Grid size={12}><Grid size={12}><DailySummaryUI daily={dataFetcherOutput?.daily} /></Grid></Grid>
-
-      {/* Selectores de variables a comparar y filtro de rango horario */}
-      <Grid size={12} container spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <VariableSelectUI label="Variable 1" value={variable1} onChange={setVariable1} excludeValue={variable2} />
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <VariableSelectUI label="Variable 2" value={variable2} onChange={setVariable2} excludeValue={variable1} />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <RangeFilterUI value={rangeFilter} onChange={setRangeFilter} />
-        </Grid>
-      </Grid>
-
-      {/* Gráfico */}
-      <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
-        <ChartUI
-          chartTitle={`${getVariableLabel(variable1)} y ${getVariableLabel(variable2)} por Hora`}
-          value1Name={value1Name}
-          value2Name={value2Name}
-          arrHourlyTimes={arrHourlyTimes}
-          arrValues1={arrValues1}
-          arrValues2={arrValues2}
-          rangeFilter={rangeFilter}
-        />
-      </Grid>
-
-      {/* Tabla */}
-      <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: "none", md: "block" } }}>
-        <TableUI
-          value1Name={value1Name}
-          value2Name={value2Name}
-          arrHourlyTimes={arrHourlyTimes}
-          arrValues1={arrValues1}
-          arrValues2={arrValues2}
-        />
-      </Grid>
-
-    </Grid>
+    </ThemeProvider>
   );
 }
 
