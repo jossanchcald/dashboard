@@ -1,6 +1,7 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import Typography from "@mui/material/Typography";
 import { type RangeFilter } from "../types/DashboardTypes";
+import { useTheme } from "@mui/material/styles";
 
 interface ChartUIProps {
   chartTitle?: string;
@@ -17,6 +18,8 @@ const arrValues2 = [0, 0, 0, 0, 0, 0, 0];
 const arrLabels = ["1 Jan"];
 
 export default function ChartUI(props: ChartUIProps) {
+
+  const theme = useTheme();
 
   const xAxisConfig = (() => {
     switch (props.rangeFilter) {
@@ -67,10 +70,21 @@ export default function ChartUI(props: ChartUIProps) {
 
   return (
     <>
-      <Typography variant="h5" component="div">
+      <Typography variant="h5" component="div"   sx={{ backgroundColor: theme.palette.background.paper, borderTopLeftRadius: 4, borderTopRightRadius: 4, paddingTop: 2, paddingBottom: 1}}>
         {props.chartTitle}
       </Typography>
       <LineChart
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+          borderBottomLeftRadius: 4,
+          borderBottomRightRadius: 4,
+
+          "& .MuiChartsSurface-root": {
+          backgroundColor: theme.palette.background.paper,
+          borderBottomLeftRadius: 4,
+          borderBottomRightRadius: 4,
+        },
+        }}
         height={300}
         series={[
           {

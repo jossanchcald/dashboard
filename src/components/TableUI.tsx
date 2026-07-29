@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import { useTheme } from "@mui/material/styles";
 
 interface TableUIProps {
     value1Name?: string;
@@ -70,6 +71,8 @@ export default function TableUI(props: TableUIProps) {
         props.arrValues2 ?? arrValues2
     );
 
+    const theme = useTheme();
+
    return (
       <Box sx={{ height: 350, width: '100%' }}>
          <DataGrid
@@ -84,6 +87,22 @@ export default function TableUI(props: TableUIProps) {
             }}
             pageSizeOptions={[5]}
             disableRowSelectionOnClick
+            sx={{
+                backgroundColor: theme.palette.background.paper,
+                border: 0,
+
+                "& .MuiDataGrid-columnHeaders": {
+                    backgroundColor: theme.palette.background.paper,
+                },
+
+                "& .MuiDataGrid-footerContainer": {
+                    backgroundColor: theme.palette.background.paper,
+                },
+
+                "& .MuiDataGrid-row": {
+                    backgroundColor: theme.palette.background.paper,
+                },
+            }}
          />
       </Box>
    );
