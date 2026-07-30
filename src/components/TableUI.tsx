@@ -15,10 +15,10 @@ interface TableUIProps {
 
 function combineArrays(arrLabels: string[], arrValues1: number[], arrValues2: number[]) {
     return arrLabels.map((label, index) => {
-        const date = new Date(label);
         return {
             id: index,
-            label: date.toLocaleString("es-EC", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
+            // Guardamos el Date real, para que DataGrid pueda ordenarlos
+            date: new Date(label),
             value1: arrValues1[index],
             value2: arrValues2[index]
         };
@@ -49,7 +49,20 @@ export default function TableUI(props: TableUIProps) {
     }
 
     const columns: GridColDef[] = [
-        { field: "label", headerName: "Fecha", width: 150 },
+        {
+            field: "date",
+            headerName: "Fecha",
+            width: 150,
+            type: "dateTime",
+            // Usamos valueFormatter para mostrar
+            valueFormatter: (value: Date) =>
+                value.toLocaleString("es-EC", {
+                    day: "2-digit",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
+        },
         { field: "value1", headerName: props.value1Name ?? "--", width: 130 },
         { field: "value2", headerName: props.value2Name ?? "--", width: 130 },
     ];
@@ -65,7 +78,10 @@ export default function TableUI(props: TableUIProps) {
          <DataGrid
             rows={rows}
             columns={columns}
-            initialState={{ pagination: { paginationModel: { pageSize: 5 } } }}
+            initialState={{
+                pagination: { paginationModel: { pageSize: 5 } },
+                sorting: { sortModel: [{ field: 'date', sort: 'asc' }] },
+            }}
             pageSizeOptions={[5]}
             disableRowSelectionOnClick
             sx={{
