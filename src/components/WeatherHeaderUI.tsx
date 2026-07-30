@@ -1,9 +1,9 @@
 // src/components/WeatherHeaderUI.tsx
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 import useWeatherTheme from '../hooks/useWeatherTheme';
 import { getConditionLabel } from '../utils/weatherCondition';
-//import { getWeatherImage } from '../utils/weatherImages';
 import { type Current, type Daily } from '../types/DashboardTypes';
 
 import imgClimaPrueba from '../assets/weather/imgClimaPrueba.webp';
@@ -13,18 +13,24 @@ interface WeatherHeaderUIProps {
   daily?: Daily;
   utcOffsetSeconds?: number;
   locationName?: string;
+  loading?: boolean;
 }
 
 export default function WeatherHeaderUI(props: WeatherHeaderUIProps) {
   const weatherTheme = useWeatherTheme(props.current, props.daily, props.utcOffsetSeconds);
 
-  // App.tsx ya bloquea el render completo mientras dataState.loading es true,
-  // así que en teoría esto nunca debería verse vacío. Lo dejamos como resguardo.
-  if (!props.current || !props.daily) {
-    return <Box sx={{ p: 4, borderRadius: 3, minHeight: 220 }} />;
+  if (props.loading || !props.current || !props.daily) {
+    return (
+      <Box sx={{ position: 'relative', borderRadius: 3, overflow: 'hidden', p: 4, minHeight: 220 }}>
+        <Skeleton variant="circular" width={56} height={56} sx={{ position: 'absolute', top: 24, right: 24 }} />
+        <Skeleton variant="text" width={140} height={28} />
+        <Skeleton variant="text" width={180} height={80} />
+        <Skeleton variant="text" width={200} height={32} />
+        <Skeleton variant="text" width={240} height={24} />
+      </Box>
+    );
   }
 
-  //const weatherImage = getWeatherImage(weatherTheme.condition, weatherTheme.isDay);
   const timeLabel = weatherTheme.localDate.toLocaleTimeString('es-EC', { hour: 'numeric', minute: '2-digit' });
 
   return (
@@ -38,8 +44,6 @@ export default function WeatherHeaderUI(props: WeatherHeaderUIProps) {
         color: '#fff',
       }}
     >
-
-      {/* ---- IMAGEN DE CLIMA (estática) ---- */}
       <Box
         component="img"
         src={imgClimaPrueba}
@@ -54,7 +58,6 @@ export default function WeatherHeaderUI(props: WeatherHeaderUIProps) {
         }}
       />
 
-      {/* ---- SOL / LUNA: círculo simple, sin ícono, sin glow ---- */}
       <Box
         sx={{
           position: 'absolute',

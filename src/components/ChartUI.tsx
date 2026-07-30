@@ -1,5 +1,6 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
 import { type RangeFilter } from "../types/DashboardTypes";
 import { useTheme } from "@mui/material/styles";
 
@@ -11,6 +12,7 @@ interface ChartUIProps {
   arrValues1?: Array<number>;
   arrValues2?: Array<number>;
   rangeFilter: RangeFilter;
+  loading?: boolean;
 }
 
 const arrValues1 = [0, 0, 0, 0, 0, 0, 0];
@@ -23,20 +25,14 @@ export default function ChartUI(props: ChartUIProps) {
 
   const xAxisConfig = (() => {
     switch (props.rangeFilter) {
-  
+
       case "24h":
         return {
           tickInterval: (_: unknown, index: number) => index % 2 === 0,
           valueFormatter: (value: string) => {
             const fecha = new Date(value);
-  
-            return fecha.toLocaleDateString("es-EC", {
-              day: "numeric",
-              month: "short",
-            }) + "\n" +
-            fecha.toLocaleTimeString("es-EC", {
-              hour: "2-digit",
-            });
+            return fecha.toLocaleDateString("es-EC", { day: "numeric", month: "short" }) + "\n" +
+              fecha.toLocaleTimeString("es-EC", { hour: "2-digit" });
           },
         };
 
@@ -45,66 +41,59 @@ export default function ChartUI(props: ChartUIProps) {
           tickInterval: (_: unknown, index: number) => index % 4 === 0,
           valueFormatter: (value: string) => {
             const fecha = new Date(value);
-  
-            return fecha.toLocaleDateString("es-EC", {
-              day: "numeric",
-              month: "short",
-            }) + "\n" +
-            fecha.toLocaleTimeString("es-EC", {
-              hour: "2-digit",
-            });
+            return fecha.toLocaleDateString("es-EC", { day: "numeric", month: "short" }) + "\n" +
+              fecha.toLocaleTimeString("es-EC", { hour: "2-digit" });
           },
         };
-  
+
       case "todo":
         return {
           tickInterval: (_: unknown, index: number) => index % 24 === 0,
           valueFormatter: (value: string) =>
-            new Date(value).toLocaleDateString("es-EC", {
-              day: "numeric",
-              month: "short",
-            }),
+            new Date(value).toLocaleDateString("es-EC", { day: "numeric", month: "short" }),
         };
     }
   })();
 
   return (
     <>
-      <Typography variant="h5" component="div"   sx={{ backgroundColor: theme.palette.background.paper, borderTopLeftRadius: 4, borderTopRightRadius: 4, paddingTop: 2, paddingBottom: 1}}>
+      <Typography variant="h5" component="div" sx={{ backgroundColor: theme.palette.background.paper, borderTopLeftRadius: 4, borderTopRightRadius: 4, paddingTop: 2, paddingBottom: 1 }}>
         {props.chartTitle}
       </Typography>
-      <LineChart
-        sx={{
-          backgroundColor: theme.palette.background.paper,
-          borderBottomLeftRadius: 4,
-          borderBottomRightRadius: 4,
 
-          "& .MuiChartsSurface-root": {
-          backgroundColor: theme.palette.background.paper,
-          borderBottomLeftRadius: 4,
-          borderBottomRightRadius: 4,
-        },
-        }}
-        height={300}
-        series={[
-          {
-            data: props.arrValues1 ?? arrValues1,
-            label: props.value1Name ?? "--",
-          },
-          {
-            data: props.arrValues2 ?? arrValues2,
-            label: props.value2Name ?? "--",
-          },
-        ]}
-        xAxis={[
-          {
-            scaleType: "point",
-            data: props.arrHourlyTimes ?? arrLabels,
-            tickInterval: xAxisConfig.tickInterval,
-            valueFormatter: xAxisConfig.valueFormatter,
-          },
-        ]}
-      />
+      {props.loading ? (
+        <Skeleton
+          variant="rectangular"
+          height={300}
+          sx={{ borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}
+        />
+      ) : (
+        <LineChart
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            borderBottomLeftRadius: 4,
+            borderBottomRightRadius: 4,
+            "& .MuiChartsSurface-root": {
+              backgroundColor: theme.palette.background.paper,
+              borderBottomLeftRadius: 4,
+              borderBottomRightRadius: 4,
+            },
+          }}
+          height={300}
+          series={[
+            { data: props.arrValues1 ?? arrValues1, label: props.value1Name ?? "--" },
+            { data: props.arrValues2 ?? arrValues2, label: props.value2Name ?? "--" },
+          ]}
+          xAxis={[
+            {
+              scaleType: "point",
+              data: props.arrHourlyTimes ?? arrLabels,
+              tickInterval: xAxisConfig.tickInterval,
+              valueFormatter: xAxisConfig.valueFormatter,
+            },
+          ]}
+        />
+      )}
     </>
   );
 }

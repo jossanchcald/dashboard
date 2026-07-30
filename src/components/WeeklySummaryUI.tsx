@@ -4,12 +4,14 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 import WeatherIconUI from './WeatherIconUI';
 import { getWeatherCondition } from '../utils/weatherCondition';
 import { type Daily } from '../types/DashboardTypes';
 
 interface WeeklySummaryUIProps {
   daily?: Daily;
+  loading?: boolean;
 }
 
 function isToday(isoDate: string) {
@@ -18,18 +20,34 @@ function isToday(isoDate: string) {
 }
 
 function formatDayLabel(isoDate: string) {
-  // Se agrega T00:00:00 para que el navegador interprete la fecha en hora local
-  // y no se desfase un día por UTC
   const date = new Date(`${isoDate}T00:00:00`);
   const label = date.toLocaleDateString('es-EC', { weekday: 'short' });
-  // Algunos navegadores devuelven el día abreviado con un punto (ej. "mié.")
   return label.replace('.', '');
 }
 
 export function WeeklySummaryUI(props: WeeklySummaryUIProps) {
-  if (!props.daily) return null;
+  if (props.loading || !props.daily) {
+    return (
+      <Card>
+        <CardContent>
+          <Typography variant="h6" component="div" gutterBottom>
+            Prónostico de la Semana
+          </Typography>
 
-  // El API de Open-Meteo devuelve 7 días por defecto en "daily"
+          <Stack direction="row" spacing={1} sx={{ overflowX: 'auto', pb: 1 }}>
+            {Array.from({ length: 7 }).map((_, index) => (
+              <Box key={index} sx={{ flex: '0 0 auto', minWidth: 88, textAlign: 'center', py: 1.5, px: 1 }}>
+                <Skeleton variant="text" width={40} sx={{ mx: 'auto' }} />
+                <Skeleton variant="circular" width={32} height={32} sx={{ mx: 'auto', my: 1 }} />
+                <Skeleton variant="text" width={50} sx={{ mx: 'auto' }} />
+              </Box>
+            ))}
+          </Stack>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const days = props.daily.time.slice(0, 7);
 
   return (
@@ -60,11 +78,7 @@ export function WeeklySummaryUI(props: WeeklySummaryUIProps) {
                   bgcolor: today ? 'action.selected' : 'transparent',
                 }}
               >
-                <Typography
-                  variant="subtitle2"
-                  component="div"
-                  sx={{ textTransform: 'capitalize', fontWeight: 600 }}
-                >
+                <Typography variant="subtitle2" component="div" sx={{ textTransform: 'capitalize', fontWeight: 600 }}>
                   {formatDayLabel(isoDate)}
                 </Typography>
 

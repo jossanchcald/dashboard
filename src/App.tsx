@@ -79,6 +79,7 @@ function App() {
             daily={dataFetcherOutput?.daily}
             utcOffsetSeconds={dataFetcherOutput?.utc_offset_seconds}
             locationName={selectedCity?.name}
+            loading={isLoading}
           />
         </Grid>
 
@@ -104,19 +105,19 @@ function App() {
         <Grid container size={{ xs: 12, md: 12 }} sx={{ justifyContent: 'center', gap: 2 }}>
           <Grid sx={{ display: 'none' }} size={{ md: 3 }}></Grid>
           <Grid size={{ xs: 12, md: 3 }}>
-            <IndicatorUI title='Temperatura Aparente' description={dataFetcherOutput ? `${dataFetcherOutput.current.apparent_temperature} ${dataFetcherOutput.current_units.apparent_temperature}` : undefined} />
+            <IndicatorUI title='Temperatura Aparente' description={dataFetcherOutput ? `${dataFetcherOutput.current.apparent_temperature} ${dataFetcherOutput.current_units.apparent_temperature}` : undefined} loading={isLoading} />
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
-            <IndicatorUI title='Velocidad del viento' description={dataFetcherOutput ? `${dataFetcherOutput.current.wind_speed_10m} ${dataFetcherOutput.current_units.wind_speed_10m}` : undefined} />
+            <IndicatorUI title='Velocidad del viento' description={dataFetcherOutput ? `${dataFetcherOutput.current.wind_speed_10m} ${dataFetcherOutput.current_units.wind_speed_10m}` : undefined} loading={isLoading} />
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
-            <IndicatorUI title='Humedad Relativa' description={dataFetcherOutput ? `${dataFetcherOutput.current.relative_humidity_2m} ${dataFetcherOutput.current_units.relative_humidity_2m}` : undefined} />
+            <IndicatorUI title='Humedad Relativa' description={dataFetcherOutput ? `${dataFetcherOutput.current.relative_humidity_2m} ${dataFetcherOutput.current_units.relative_humidity_2m}` : undefined} loading={isLoading} />
           </Grid>
         </Grid>
 
         <Grid container size={12}>
           <Grid size={12} sx={{ display: "flex", justifyContent: "center" }}>
-            <WeeklySummaryUI daily={dataFetcherOutput?.daily} />
+            <WeeklySummaryUI daily={dataFetcherOutput?.daily} loading={isLoading} />
           </Grid>
         </Grid>
 
@@ -141,6 +142,7 @@ function App() {
             arrValues1={arrValues1}
             arrValues2={arrValues2}
             rangeFilter={rangeFilter}
+            loading={isLoading}
           />
         </Grid>
 
@@ -151,6 +153,7 @@ function App() {
             arrHourlyTimes={arrHourlyTimes}
             arrValues1={arrValues1}
             arrValues2={arrValues2}
+            loading={isLoading}
           />
         </Grid>
 
