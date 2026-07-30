@@ -6,7 +6,7 @@ import { getConditionLabel } from '../utils/weatherCondition';
 //import { getWeatherImage } from '../utils/weatherImages';
 import { type Current, type Daily } from '../types/DashboardTypes';
 
-import imgClimaPrueba from '../assets/weather/imgClimaPrueba.png';
+import imgClimaPrueba from '../assets/weather/imgClimaPrueba.webp';
 
 interface WeatherHeaderUIProps {
   current?: Current;
