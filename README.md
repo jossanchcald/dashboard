@@ -10,5 +10,5 @@ Desarrollar un dashboard interactivo y visualmente intuitivo utilizando tecnolog
 *   **Estilos/UI:** CSS, MaterialUI
 
 ## Autores
-**Josué Sánchez Calderón**
+**Josué Sánchez Calderón** y
 **Jared Selim Beltrán Martinez**
