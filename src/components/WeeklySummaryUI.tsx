@@ -31,7 +31,7 @@ export function WeeklySummaryUI(props: WeeklySummaryUIProps) {
       <Card>
         <CardContent>
           <Typography variant="h6" component="div" gutterBottom>
-            Prónostico de la Semana
+            Pronóstico de la Semana
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ overflowX: 'auto', pb: 1 }}>
@@ -54,7 +54,7 @@ export function WeeklySummaryUI(props: WeeklySummaryUIProps) {
     <Card>
       <CardContent>
         <Typography variant="h6" component="div" gutterBottom>
-          Prónostico de la Semana
+          Pronostico de la Semana
         </Typography>
 
         <Stack direction="row" spacing={1} sx={{ overflowX: 'auto', pb: 1 }}>

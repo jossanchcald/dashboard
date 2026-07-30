@@ -4,9 +4,8 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import useWeatherTheme from '../hooks/useWeatherTheme';
 import { getConditionLabel } from '../utils/weatherCondition';
+import { getWeatherImage } from '../utils/weatherImages';
 import { type Current, type Daily } from '../types/DashboardTypes';
-
-import imgClimaPrueba from '../assets/weather/imgClimaPrueba.webp';
 
 interface WeatherHeaderUIProps {
   current?: Current;
@@ -31,6 +30,7 @@ export default function WeatherHeaderUI(props: WeatherHeaderUIProps) {
     );
   }
 
+  const weatherImage = getWeatherImage(weatherTheme.condition, weatherTheme.isDay);
   const timeLabel = weatherTheme.localDate.toLocaleTimeString('es-EC', { hour: 'numeric', minute: '2-digit' });
 
   return (
@@ -46,8 +46,12 @@ export default function WeatherHeaderUI(props: WeatherHeaderUIProps) {
     >
       <Box
         component="img"
-        src={imgClimaPrueba}
+        src={weatherImage}
         alt={getConditionLabel(weatherTheme.condition)}
+        width={160}
+        height={160}
+        loading="eager"
+        fetchPriority="high"
         sx={{
           position: 'absolute',
           inset: 0,

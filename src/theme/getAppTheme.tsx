@@ -18,10 +18,6 @@ export default function getAppTheme(isDay: boolean) {
       mode: isDay ? 'light' : 'dark',
       background: {
         paper: glassColor,
-        // "transparent" (la palabra clave CSS) rompe MUI internamente porque
-        // no es un formato de color parseable por su función alpha().
-        // rgba(0,0,0,0) es funcionalmente idéntico (100% transparente)
-        // pero SÍ es un formato válido que MUI puede decomponer.
         default: 'rgba(0,0,0,0)',
       },
     },

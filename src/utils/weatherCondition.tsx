@@ -1,4 +1,4 @@
-// src/utils/weatherCondition.ts
+// src/utils/weatherCondition.tsx
 export type WeatherCondition =
   | 'clear' | 'partlyCloudy' | 'cloudy' | 'fog'
   | 'drizzle' | 'rain' | 'snow' | 'storm';
