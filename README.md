@@ -1,32 +1,14 @@
-# React + TypeScript + Vite
+# Global Weather Dashboard
+**Proyecto 04: Dashboard - React**
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Objetivo del Proyecto
+Desarrollar un dashboard interactivo y visualmente intuitivo utilizando tecnologías web modernas, como **React** y **TypeScript**. El objetivo principal es permitir a los usuarios monitorear en tiempo real métricas del clima en todas las partes del mundo, fomentando la exploración de buenas prácticas de programación, el diseño centrado en el usuario y el uso de herramientas actuales en el desarrollo de interfaces dinámicas.
 
-Currently, two official plugins are available:
+## Tecnologías Utilizadas
+*   **Core:** React
+*   **Lenguaje:** TypeScript
+*   **Estilos/UI:** CSS, MaterialUI
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Autores
+**Josué Sánchez Calderón**
+**Jared Selim Beltrán Martinez**
